@@ -1,0 +1,8 @@
+-- return {
+--   options = {
+--     opt = {
+--     wrap = true,
+--     clipboard = unnamedplus
+--     }
+--   }
+-- }
