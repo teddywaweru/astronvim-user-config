@@ -3,7 +3,11 @@ return {
   -- require("plugin.options"),
   options = {
     opt = {
-      wrap = true
+      wrap = true,
+      guifont = "Hack:h10"
+    },
+    g = {
+      neovide_refresh_rate = 50,
     }
   },
   lsp = {
