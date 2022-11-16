@@ -20,6 +20,8 @@ return {
   mappings = {
      n = {
     ["<C-\\>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
+    ["ff"] = { "<cmd>HopChar1<CR>", desc = "hop-char" },
+    ["fl"] = { "<cmd>HopLine<CR>", desc = "hop-line" },
   },
   t = {
     -- ["<esc>"] = { "<C-\\><C-n>", desc = "Terminal normal mode" },
@@ -40,6 +42,14 @@ return {
   },
   plugins = {
     init = {
+      {
+      "phaazon/hop.nvim",
+        branch = 'v2', -- optional but strongly recommended
+        config = function()
+          -- you can configure Hop the way you like here; see :h hop-config
+          require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
+        end
+      },
       {
         "p00f/clangd_extensions.nvim",
         after = "mason-lspconfig.nvim",
@@ -69,26 +79,6 @@ return {
       },
        -- {"folke/tokyonight.nvim"}, --install tokyonight
        -- {'CRAG666/code_runner.nvim'} --install code_runner
-      ["ggandor/leap-spooky.nvim"] = {
-        max_phase_one_targets = nil,
-        highlight_unlabeled_phase_one_targets = false,
-        max_highlighted_traversal_targets = 10,
-        case_sensitive = false,
-        equivalence_classes = { ' \t\r\n', },
-        substitute_chars = {},
-        safe_labels = { 's', 'f', 'n', 'u', 't' },
-        labels = { 's', 'f', 'n', 'j', 'k' },
-        special_keys = {
-          repeat_search = '<enter>',
-          next_phase_one_target = '<enter>',
-          next_target = {'<enter>', ';'},
-          prev_target = {'<tab>', ','},
-          next_group = '<space>',
-          prev_group = '<tab>',
-          multi_accept = '<enter>',
-          multi_revert = '<backspace>',
-        }
-      } --install leap
     },
     ["mason-lspconfig"] = {
       ensure_installed = { "rust_analyzer", "tsserver", "clangd" }, -- install rust_analyzer
