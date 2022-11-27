@@ -11,7 +11,8 @@ return {
       guifont = "Hack:h10",
       tabstop = 2,
       softtabstop = 2,
-      expandtab = false
+      expandtab = false,
+      cmdheight = 1
     },
     g = {
       neovide_refresh_rate = 50,
