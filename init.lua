@@ -74,7 +74,21 @@ return {
   lsp = {
     setup_handlers = {
       rust_analyzer = function(_, opts)
+        opts = {
+          tools = {
+            inlay_hints = {
+              auto = false,
+              only_current_line = false,
+              show_parameter_hints = true,
+              RustSetInlayHints = true,
+              RustEnableInlayHints = true,
+              parameter_hint_prefix = ": ",
+              other_hints_prefix = "--> "
+            },
+          },
+        }
         require("rust-tools").setup { server = opts }
+        -- require("rust-tools").setup(opts)
       end
     },
     config = {
