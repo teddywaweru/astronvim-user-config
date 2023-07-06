@@ -1,7 +1,51 @@
 return {
+  polish = function()
+    -- create an augroup for easy management of autocommands
+    vim.api.nvim_create_augroup("autohidetabline", { clear = true })
+    vim.api.nvim_create_autocmd("User", {
+      desc = "Hide tabline when only one buffer and one tab",
+      pattern = "AstroBufsUpdated",
+      group = "autohidetabline",
+      callback = function()
+        local new_showtabline = #vim.t.bufs > 1 and 2 or 1
+        if new_showtabline ~= vim.opt.showtabline:get() then
+          vim.opt.showtabline = new_showtabline
+        end
+      end
+    })
+    vim.api.nvim_create_augroup("disableCapsLock", { clear = true })
+    vim.api.nvim_create_autocmd("VimEnter", {
+      desc = "Disable Caps Lock when starting AstroNvim",
+      group = "disableCapsLock",
+      callback = function()
+        os.execute(
+          "xmodmap -e 'keycode 0x42 = Escape'"
+        )
+      end
+    })
+    vim.api.nvim_create_augroup("enableCapsLock", { clear = true })
+    vim.api.nvim_create_autocmd("VimLeave", {
+      desc = "Enable Caps Lock when exiting AstroNvim",
+      group = "enableCapsLock",
+      callback = function()
+        os.execute(
+          "xmodmap -e 'keycode 0x42 = Caps_Lock'"
+        )
+      end
+    })
+
+    -- Carry out a command, similar to using ":"
+    -- vim.api.nvim_command('highlight Normal guibg=none')
+    -- Above command is similar to the next one
+    vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "NormalSB", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "CursorLine", { bg = "NONE" })
+  end,
+
   highlights = {
     -- set highlights for all themes
-    -- use a function override to let us use lua to retrieve colors from highlight group
     -- there is no default table so we don't need to put a parameter for this function
     init = function()
       local get_hlgroup = require("astronvim.utils").get_hlgroup
@@ -28,7 +72,6 @@ return {
       }
     end,
   },
-  -- require("plugin.options"),
   updater = {
     channel = "stable",
     auto_reload = false,
@@ -50,29 +93,44 @@ return {
   },
   mappings = {
     n = {
-      ["<C-\\>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
+      ["<leader>tt"] = { "<cmd>ToggleTerm<CR>", desc = "ToggleTerminal" },
       ["ff"] = { "<cmd>HopChar1<CR>", desc = "hop-char" },
       ["fl"] = { "<cmd>HopLine<CR>", desc = "hop-line" },
       ["H"] = { "<cmd>bprevious<CR>", desc = "Move to prev Buffer" },
       ["L"] = { "<cmd>bnext<CR>", desc = "Move to prev Buffer" },
-      ["<leader>Y"] = { "\"+y", desc = "" },
-      ["<leader>D"] = { "\"+d", desc = "" },
+      ["<leader>Y"] = { "\"+y", desc = "Yank to System Clipboard" },
+      ["<leader>D"] = { "\"+d", desc = "Delete to System Clipboard" },
       ["<leader>q"] = { "<nop>", desc = "Do Nothing" },
       ["<S-Up>"] = { "<S-Up>zz", desc = "Move Up & Center Cursor" },
       ["<S-Down>"] = { "<S-Down>zz", desc = "Move Down & Center Cursor" },
+      ["<leader>;"] = { "<Esc><S-a>;<Esc>", desc = "Insert ; & Esc" },
+      ["<leader>fqo"] = { "<cmd>copen<CR>", desc = "Open the QuickFix List" },
+      ["<leader>fqc"] = { "<cmd>cclose<CR>", desc = "Close the QuickFix List" },
+      ["<leader>fql"] = { "<cmd>call setqflist([],'r')<CR>", desc = "Clear the QuickFix List" },
+      [""] = { "10kzz", desc = "Move up by 10" },
+      [""] = { "10jzz", desc = "Move down by 10" },
 
-      -- vim.keymap.set("n", "<leader>Y", [["+Y]])
     },
-    t = {
-      -- ["<esc>"] = { "<C-\\><C-n>", desc = "Terminal normal mode" },
-      ["jk"] = { "<C-\\><C-n>", desc = "Terminal normal mode" },
-    },
+    t = {},
     v = {
-      ["<leader>Y"] = { "\"+y", desc = "Paste to System Clipboard" },
+      ["<leader>Y"] = { "\"+y", desc = "Yank to System Clipboard" },
+      ["<leader>D"] = { "\"+d", desc = "Delete to System Clipboard" },
+      ["J"] = { ":m '>+1<CR>gv=gv", desc = "Move block of text down" },
+      ["K"] = { ":m '<-2<CR>gv=gv", desc = "Move block of text up" }
+    },
+    i = {
+      [""] = { "<Esc><S-a>;<CR>", desc = "Insert ; & cont" },
+      [""] = { "<Esc>", desc = "Insert ; & cont" },
     }
   },
   lsp = {
     setup_handlers = {
+    },
+    config = {
+      html = {
+        filetypes = { "html", "php" },
+        -- single_filesupport = true
+      },
       rust_analyzer = function(_, opts)
         opts = {
           tools = {
@@ -88,299 +146,31 @@ return {
           },
         }
         require("rust-tools").setup { server = opts }
-        -- require("rust-tools").setup(opts)
-      end
-    },
-    config = {
-      html = {
-        filetypes = { "html", "php" },
-        single_filesupport = false
+      end,
+      intelephense = {
+        filetypes = { "php" },
+        single_filesupport = true,
+        stubs = {
+          "wordpress-stubs",
+          "woocommerce-stubs",
+          "wp-cli-stubs"
+        }
       }
     },
   },
-  plugins = {
-    {
-      ---Plugins to Consider
-      -- treesitter-context, nvim-bqf, treesj, trouble
-    },
-    {
-      "f-person/git-blame.nvim",
-      event = "VeryLazy"
-    },
-    {
-      "kylechui/nvim-surround",
-      version = "*",
-      event = "VeryLazy",
-      opts = {}
-    },
-    {
-      "phaazon/hop.nvim",
-      branch = 'v2', -- optional but strongly recommended
-      cmd = { "HopChar1", "HopLine" },
-      config = function()
-        -- you can configure Hop the way you like here; see :h hop-config
-        require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
-      end
-    },
-    {
-      "p00f/clangd_extensions.nvim",
-      after = "mason-lspconfig.nvim",
-      config = function()
-        require("clangd_extensions").setup {
-          server = astronvim.lsp.server_settings "clangd"
-        }
-      end,
-    },
-    {
-      "simrat39/rust-tools.nvim",
-      after = "mason-lspconfig.nvim",
-      config = function()
-        require("rust-tools").setup({
-          -- server = astronvim.lsp.server_settings "rust_analyzer",
-          opts = {
-            tools = {
-              inlay_hints = {
-                auto = false,
-                only_current_line = false,
-                show_parameter_hints = true,
-                RustSetInlayHints = true,
-                RustEnableInlayHints = true,
-                parameter_hint_prefix = ": ",
-                other_hints_prefix = "--> "
-              },
-            },
-          },
-        })
-      end,
-    },
-    -- {
-    --   "simrat39/rust-tools.nvim",
-    --   after = "mason-lspconfig.nvim", -- make sure to load after mason-lspconfig
-    --   config = function()
-    --     require("rust-tools").setup {
-    --       server = astronvim.lsp.server_settings "rust_analyzer", -- get the server settings and built in capabilities/on_attach
-    --       tools = {
-    --         inlay_hints = { },
-    --       },
-    --     }
-    --   end,
-    -- },
-    {
-      "jose-elias-alvarez/typescript.nvim",
-      after = "mason-lspconfig.nvim",
-      config = function()
-        require("typescript").setup {
-          server = astronvim.lsp.server_settings "tsserver"
-        }
-      end,
-    },
-    {
-      "catppuccin/nvim",
-      as = "catppuccin",
-      colorscheme = "catppuccin",
-      lazy = false,
-      priority = 1000,
-      config = function()
-        require("catppuccin").setup {
-          flavour = "mocha"
-        }
-      end
-    },
-    -- {
-    --   "folke/tokyonight.nvim",
-    --   as = "tokyonight",
-    --   lazy = false,
-    --   priority = 1000,
-    --   config = function()
-    --     require("tokyonight").setup {
-    --       style = "night",
-    --       on_colors = function(colors)
-    --         colors.hint = colors.orange
-    --         colors.git.add = "#58F139"
-    --         colors.gitSigns.add = "#58F139"
-    --         colors.git.change = colors.orange
-    --         colors.gitSigns.change = colors.orange
-    --       end
-    --     }
-    --   end
-    -- }, --install tokyonight
-    --       -- {'CRAG666/code_runner.nvim'} --install code_runner
-    --     -- },
-    --     -- ["mason-lspconfig"] = {
-    --     --   ensure_installed = {
-    --     --     "rust_analyzer",
-    --     --     "tsserver",
-    --     --     -- "clangd"
-    --     --   }, -- install rust_analyzer
-    -- },
-  },
-  --   -- colorscheme = "tokyonight",
-  --   -- lazy = false,
-  --   -- require("tokyonight").setup({
-  --   --   style = "night",
-  --   --   on_colors = function(colors)
-  --   --     colors.hint = colors.orange
-  --   --     colors.git.add = "#58F139"
-  --   --     colors.gitSigns.add = "#58F139"
-  --   --     colors.git.change = colors.orange
-  --   --     colors.gitSigns.change = colors.orange
-  --   --   end
-  --   -- }),
+  -- ,
   colorscheme = "catppuccin",
-  -- require("catppuccin").setup({
-  --   flavour = "mocha"
-  -- })
 }
--- return {
---   -- require("plugin.options"),
---   updater = {
---     channel = "stable",
---     auto_reload = false,
---     auto_quit = false,
---   },
---   options = {
---     opt = {
---       wrap = true,
---       guifont = "Hack:h10",
---       tabstop = 2,
---       softtabstop = 2,
---       expandtab = false,
---       cmdheight = 1
---     },
---     g = {
---       neovide_refresh_rate = 50,
---     }
---   },
---   mappings = {
---     n = {
---       ["<C-\\>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
---       ["ff"] = { "<cmd>HopChar1<CR>", desc = "hop-char" },
---       ["fl"] = { "<cmd>HopLine<CR>", desc = "hop-line" },
---     },
---     t = {
---       -- ["<esc>"] = { "<C-\\><C-n>", desc = "Terminal normal mode" },
---       ["jk"] = { "<C-\\><C-n>", desc = "Terminal normal mode" },
---     },
---   },
---   lsp = {
---     skip_setup = { "rust_analyzer", "tsserver" }, -- skip lsp setup because rust-tools will do it itself
---     -- skip_setup = { "tsserver" },      --skip lsp setup because rust-tools will do it itself
---     -- skip_setup = { "clangd" },
---     ["server-settings"] = {
---       -- clangd = {
---       --   capabilities = {
---       --     offsetEncoding = "utf-8",
---       --   },
---       -- },
---       html = {
---         filetypes = { "html", "php" },
---         -- single_filesupport = false
---       }
---     },
---   },
---   plugins = {
---     init = {
---       {
---         "nvim-treesitter/nvim-treesitter-context",
---         as = "treesitter-context",
---         config = function()
---           require('treesitter-context').setup {
---             enable = true,
---             max_lines = 0,
---             min_window_height = 0,
---             line_numbers = true,
---             multiline_threshold = 20,
---             trim_scope = 'outer',
---             mode = 'cursor',
---             separator = nil,
---             zindex = 2000
---           }
---         end
---       },
---       {
---         "phaazon/hop.nvim",
---         branch = 'v2', -- optional but strongly recommended
---         config = function()
---           -- you can configure Hop the way you like here; see :h hop-config
---           require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
---         end
---       },
---       -- {
---       --   "p00f/clangd_extensions.nvim",
---       --   after = "mason-lspconfig.nvim",
---       --   config = function()
---       --     require("clangd_extensions").setup {
---       --       server = astronvim.lsp.server_settings "clangd"
---       --     }
---       --   end,
---       -- },
---       {
---         "simrat39/rust-tools.nvim",
---         after = "mason-lspconfig.nvim", -- make sure to load after mason-lspconfig
---         config = function()
---           require("rust-tools").setup {
---             server = astronvim.lsp.server_settings "rust_analyzer", -- get the server settings and built in capabilities/on_attach
---             -- tools = {
---             --   inlay_hints = {
---             --     auto = true,
---             --     only_current_line = false,
---             --     show_parameter_hints = true,
---             --     RustSetInlayHints = true,
---             --     RustEnableInlayHints = true,
---             --     parameter_hint_prefix = ": ",
---             --     other_hints_prefix = "--> "
---             --   },
---             -- },
---           }
---         end,
---       },
---       {
---         "jose-elias-alvarez/typescript.nvim",
---         after = "mason-lspconfig.nvim",
---         config = function()
---           require("typescript").setup {
---             server = astronvim.lsp.server_settings "tsserver"
---           }
---         end,
---       },
---       {
---         "catppuccin/nvim",
---         as = "catppuccin",
---         config = function()
---           require("catppuccin").setup {}
---         end
---       },
---       {
---         "folke/tokyonight.nvim",
---         as = "tokyonight",
---         config = function()
---           require("tokyonight").setup {
---           }
---         end
---       }, --install tokyonight
---       -- {'CRAG666/code_runner.nvim'} --install code_runner
---     },
---     ["mason-lspconfig"] = {
---       ensure_installed = {
---         "rust_analyzer",
---         "tsserver",
---         -- "clangd"
---       }, -- install rust_analyzer
---     },
---   },
---   colorscheme = "tokyonight",
---   require("tokyonight").setup({
---     style = "night",
---     on_colors = function(colors)
---       colors.hint = colors.orange
---       colors.git.add = "#58F139"
---       colors.gitSigns.add = "#58F139"
---       colors.git.change = colors.orange
---       colors.gitSigns.change = colors.orange
---     end
---   }),
---   -- colorscheme = "catppuccin",
---   -- require("catppuccin").setup({
---   --   flavour = "mocha"
---   -- })
--- }
+
+
+-- Plugin Specific Changes:
+-- 1. Notify: Disable Opacity warning in configs
+-- 2. Edit Statusline to include name of the file
+-- 1. Notify: Disable Opacity warning in configs
+-- 2. Edit Statusline to include name of the file
+-- 1. Notify: Disable Opacity warning in configs
+-- 2. Edit Statusline to include name of the file
+-- 1. Notify: Disable Opacity warning in configs
+-- 2. Edit Statusline to include name of the file
+-- 1. Notify: Disable Opacity warning in configs
+-- 2. Edit Statusline to include name of the file
