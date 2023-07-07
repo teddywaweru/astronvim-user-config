@@ -14,17 +14,17 @@ return {
       end
     })
     vim.api.nvim_create_augroup("disableCapsLock", { clear = true })
-    vim.api.nvim_create_autocmd("VimEnter", {
+    vim.api.nvim_create_autocmd("InsertEnter", {
       desc = "Disable Caps Lock when starting AstroNvim",
       group = "disableCapsLock",
       callback = function()
         os.execute(
-          "xmodmap -e 'keycode 0x42 = Escape'"
+          "xmodmap -e 'clear lock' -e 'keycode 0x42 = Escape'"
         )
       end
     })
     vim.api.nvim_create_augroup("enableCapsLock", { clear = true })
-    vim.api.nvim_create_autocmd("VimLeave", {
+    vim.api.nvim_create_autocmd("InsertLeave", {
       desc = "Enable Caps Lock when exiting AstroNvim",
       group = "enableCapsLock",
       callback = function()
