@@ -129,6 +129,18 @@ return {
       ["<leader>fqc"] = { "<cmd>cclose<CR>", desc = "Close the QuickFix List" },
       ["<leader>fql"] = { "<cmd>call setqflist([],'r')<CR>", desc = "Clear the QuickFix List" },
       [""] = { "10kzz", desc = "Move up by 10" },
+      --Harpoon
+      ["<leader>AA"] = {
+        function ()
+          require('harpoon.ui').toggle_quick_menu()
+        end,
+      desc = "Toggle Harpoon Quick Menu" },
+      ["<leader>AF"] = {
+        function ()
+          require('harpoon.mark').add_file()
+        end,
+      desc = "Toggle Harpoon Quick Menu" },
+
       [""] = { "10jzz", desc = "Move down by 10" },
 
     },
