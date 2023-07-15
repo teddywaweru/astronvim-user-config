@@ -13,26 +13,47 @@ return {
         end
       end
     })
-    vim.api.nvim_create_augroup("disableCapsLock", { clear = true })
-    vim.api.nvim_create_autocmd("InsertEnter", {
-      desc = "Disable Caps Lock when starting AstroNvim",
-      group = "disableCapsLock",
-      callback = function()
-        os.execute(
-          "xmodmap -e 'clear lock' -e 'keycode 0x42 = Escape'"
-        )
-      end
+    vim.api.nvim_create_augroup("switchingTabs", {clear = true})
+    vim.api.nvim_create_autocmd("TabLeave", {
+      desc = "Fire when switching Tabs",
+      group = "switchingTabs",
+      callback = function ()
+                  local windows = vim.api.nvim_list_wins()
+                  for _, window in ipairs(windows) do
+                    local bufferName = vim.fn.bufname(vim.fn.winbufnr(window))
+                    if string.find(bufferName, "neo%-tree filesystem") then
+                      vim.cmd.Neotree "toggle"
+                      break
+                    end
+                  end
+                end
     })
-    vim.api.nvim_create_augroup("enableCapsLock", { clear = true })
-    vim.api.nvim_create_autocmd("InsertLeave", {
-      desc = "Enable Caps Lock when exiting AstroNvim",
-      group = "enableCapsLock",
-      callback = function()
-        os.execute(
-          "xmodmap -e 'keycode 0x42 = Caps_Lock'"
-        )
-      end
-    })
+
+        -- TODO
+        -- Tab renaming
+        --
+
+    -- vim.api.nvim_create_augroup("disableCapsLock", { clear = true })
+    -- vim.api.nvim_create_autocmd("InsertEnter", {
+    --   desc = "Disable Caps Lock when starting AstroNvim",
+    --   group = "disableCapsLock",
+    --   callback = function()
+    --     os.execute(
+    --       "xmodmap -e 'clear lock' -eq 'keycode 0x42 = Escape'"
+    --     )
+    --   end
+    -- })
+    -- vim.api.nvim_create_augroup("enableCapsLock", { clear = true })
+    -- vim.api.nvim_create_autocmd("InsertLeave", {
+    --   desc = "Enable Caps Lock when exiting AstroNvim",
+    --   group = "enableCapsLock",
+    --   callback = function()
+    --     os.execute(
+    --       "xmodmap -e 'keycode 0x42 = Caps_Lock'"
+    --     )
+    --   end
+
+    -- })
 
     -- Carry out a command, similar to using ":"
     -- vim.api.nvim_command('highlight Normal guibg=none')
