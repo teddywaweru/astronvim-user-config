@@ -117,6 +117,18 @@ return {
       -- Hop Shortcuts
       ["ff"] = { "<cmd>HopChar1<CR>", desc = "hop-char" },
       ["fl"] = { "<cmd>HopLine<CR>", desc = "hop-line" },
+
+      -- Move between buffers in the same Viim Tab Section
+      ["H"] = { function()
+        require("astronvim.utils.buffer")
+            .nav(-(vim.v.count > 0 and vim.v.count or 1))
+      end,
+        desc = "Move to prev Buffer" },
+      ["L"] = { function()
+        require("astronvim.utils.buffer")
+            .nav(vim.v.count > 0 and vim.v.count or 1)
+      end, desc = "Move to next Buffer" },
+
       -- ...To System Clipboard
       ["<leader>Y"] = { "\"+y", desc = "Yank to System Clipboard" },
       ["<leader>D"] = { "\"+d", desc = "Delete to System Clipboard" },
