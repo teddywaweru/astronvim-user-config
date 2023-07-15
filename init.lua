@@ -129,6 +129,12 @@ return {
       ["<leader>fqc"] = { "<cmd>cclose<CR>", desc = "Close the QuickFix List" },
       ["<leader>fql"] = { "<cmd>call setqflist([],'r')<CR>", desc = "Clear the QuickFix List" },
       [""] = { "10kzz", desc = "Move up by 10" },
+
+      -- Tab Menu
+      ["<leader>Tn"] = { "<cmd>tabnew<CR>", desc = "Open a New Tab Section" },
+      ["<leader>Tm"] = { "<cmd>tabm<CR>", desc = "Move Current Tab to End" },
+      ["<leader>Ta"] = { "<cmd>Telescope telescope-tabs list_tabs<CR>h", desc = "List of all Tabs" },
+
       --Harpoon
       ["<leader>AA"] = {
         function ()
