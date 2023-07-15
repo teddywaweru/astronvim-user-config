@@ -2,6 +2,21 @@ return {
 	{
 		---Plugins to Consider
 		-- treesitter-context, nvim-bqf, treesj, trouble
+
+	},
+	{
+		"akinsho/toggleterm.nvim",
+    cmd = { "ToggleTerm", "TermExec" },
+		event = "VeryLazy",
+		config = function (_,opts)
+			--load init options for the plugin
+			require("toggleterm").setup(opts)
+			--make alterations
+			require("toggleterm").setup({
+				autochdir = true,
+			})
+		end
+	},
 	{
 		'neovim-session-manager',
 		enabled = false
