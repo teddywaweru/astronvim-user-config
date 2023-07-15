@@ -110,6 +110,7 @@ return {
     },
     g = {
       neovide_refresh_rate = 50,
+      resession_enabled = true
     }
   },
   mappings = {
