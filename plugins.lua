@@ -2,11 +2,18 @@ return {
 	{
 		---Plugins to Consider
 		-- treesitter-context, nvim-bqf, treesj, trouble
+	{
+		'neovim-session-manager',
+		enabled = false
 	},
 	{
 		"max397574/better-escape.nvim",
 		enabled = false
 
+	},
+	{
+		'LukasPietzschmann/telescope-tabs',
+		event = "VeryLazy",
 	},
 	{
 		'christoomey/vim-tmux-navigator',
