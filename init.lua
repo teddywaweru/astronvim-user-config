@@ -114,21 +114,22 @@ return {
   },
   mappings = {
     n = {
-      ["<leader>tt"] = { "<cmd>ToggleTerm<CR>", desc = "ToggleTerminal" },
+      -- Hop Shortcuts
       ["ff"] = { "<cmd>HopChar1<CR>", desc = "hop-char" },
       ["fl"] = { "<cmd>HopLine<CR>", desc = "hop-line" },
-      ["H"] = { "<cmd>bprevious<CR>", desc = "Move to prev Buffer" },
-      ["L"] = { "<cmd>bnext<CR>", desc = "Move to prev Buffer" },
+      -- ...To System Clipboard
       ["<leader>Y"] = { "\"+y", desc = "Yank to System Clipboard" },
       ["<leader>D"] = { "\"+d", desc = "Delete to System Clipboard" },
-      ["<leader>q"] = { "<nop>", desc = "Do Nothing" },
+
       ["<S-Up>"] = { "<S-Up>zz", desc = "Move Up & Center Cursor" },
       ["<S-Down>"] = { "<S-Down>zz", desc = "Move Down & Center Cursor" },
+
       ["<leader>;"] = { "<Esc><S-a>;<Esc>", desc = "Insert ; & Esc" },
+
+      -- Shortcuts for QuickFix Menu
       ["<leader>fqo"] = { "<cmd>copen<CR>", desc = "Open the QuickFix List" },
       ["<leader>fqc"] = { "<cmd>cclose<CR>", desc = "Close the QuickFix List" },
       ["<leader>fql"] = { "<cmd>call setqflist([],'r')<CR>", desc = "Clear the QuickFix List" },
-      [""] = { "10kzz", desc = "Move up by 10" },
 
       -- Tab Menu
       ["<leader>Tn"] = { "<cmd>tabnew<CR>", desc = "Open a New Tab Section" },
@@ -147,7 +148,13 @@ return {
         end,
       desc = "Toggle Harpoon Quick Menu" },
 
+      --AoB
+      [""] = { "10kzz", desc = "Move up by 10" },
       [""] = { "10jzz", desc = "Move down by 10" },
+      ["<leader>tt"] = { "<cmd>ToggleTerm<CR>", desc = "ToggleTerminal" },
+      ["<leader>q"] = false,
+      ["ZQ"] = { "<cmd>qall<CR>", desc = "Close All, Fails if Any has unsaved Changes" },
+      ["<leader>Z"] = { "<cmd>qall<CR>", desc = "Close All, Fails if Any has unsaved Changes" },
 
     },
     t = {},
@@ -159,7 +166,6 @@ return {
     },
     i = {
       [""] = { "<Esc><S-a>;<CR>", desc = "Insert ; & cont" },
-      [""] = { "<Esc>", desc = "Insert ; & cont" },
     }
   },
   lsp = {
