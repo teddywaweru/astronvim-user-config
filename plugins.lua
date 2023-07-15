@@ -18,6 +18,15 @@ return {
 		end
 	},
 	{
+		'ThePrimeagen/harpoon',
+		event = "VeryLazy",
+		config = function ()
+			require("harpoon").setup({
+				save_on_change = true
+			})
+		end
+	},
+	{
 		'neovim-session-manager',
 		enabled = false
 	},
